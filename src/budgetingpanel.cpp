@@ -730,30 +730,21 @@ void budgetingListCtrl::OnMouseMove(wxMouseEvent& event)
 {
     long item = -1;
     int flags = 0;
+    int col = HitTest(event.GetPosition(), flags, &item);
 
-    item = HitTest(event.GetPosition(), flags);
-
-    if (item >= 0)
+    if (item >= 0 && col == LIST_ID_ICON)
     {
         wxString tooltip;
         int icon = cp_->GetItemImage(item);
 
         if (icon == -1)
-        {
             tooltip = _("No budget defined");
-        }
-        else if (icon == 0)
-        {
+        else if (icon == ICON_VOID)
             tooltip = _("Within budget limits");
-        }
-        else if (icon == 1)
-        {
-            tooltip = _("Warning: budget close to the limit");
-        }
-        else if (icon == 2)
-        {
+        else if (icon == ICON_RECONCILLED)
             tooltip = _("Budget exceeded");
-        }
+        else if (icon == ICON_FOLLOWUP)
+            tooltip = _("Warning: budget close to the limit");
 
         SetToolTip(tooltip);
     }
@@ -764,5 +755,6 @@ void budgetingListCtrl::OnMouseMove(wxMouseEvent& event)
 
     event.Skip();
 }
+
 
 
