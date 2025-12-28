@@ -61,6 +61,7 @@ wxEND_EVENT_TABLE()
 wxBEGIN_EVENT_TABLE(budgetingListCtrl, mmListCtrl)
     EVT_LIST_ITEM_SELECTED(wxID_ANY,  budgetingListCtrl::OnListItemSelected)
     EVT_LIST_ITEM_ACTIVATED(wxID_ANY, budgetingListCtrl::OnListItemActivated)
+    EVT_MOTION(budgetingListCtrl::OnMouseMove)
 wxEND_EVENT_TABLE()
 
 const std::vector<ListColumnInfo> budgetingListCtrl::LIST_INFO = {
@@ -722,4 +723,35 @@ void mmBudgetingPanel::OnListItemActivated(int selectedIndex)
         m_lc->Update();
         m_lc->EnsureVisible(selectedIndex);
     }
+    void budgetingListCtrl::OnMouseMove(wxMouseEvent& event)
+    {
+        long item = -1;
+        int flags = 0;
+    
+        item = HitTest(event.GetPosition(), flags);
+    
+        if (item >= 0)
+        {
+            wxString tooltip;
+            int icon = cp_->GetItemImage(item);
+    
+            if (icon == 0)
+                tooltip = _("Within budget");
+            else if (icon == 1)
+                tooltip = _("Near the limit");
+            else if (icon == 2)
+                tooltip = _("Over budget");
+            else
+                tooltip.clear();
+    
+            SetToolTip(tooltip);
+        }
+        else
+        {
+            SetToolTip(wxEmptyString);
+        }
+    
+        event.Skip();
+    }
+
 }
