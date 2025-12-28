@@ -723,35 +723,43 @@ void mmBudgetingPanel::OnListItemActivated(int selectedIndex)
         m_lc->Update();
         m_lc->EnsureVisible(selectedIndex);
     }
-    void budgetingListCtrl::OnMouseMove(wxMouseEvent& event)
+}
+/* ===================== Tooltip logic ===================== */
+
+void budgetingListCtrl::OnMouseMove(wxMouseEvent& event)
+{
+    long item = -1;
+    int flags = 0;
+
+    item = HitTest(event.GetPosition(), flags);
+
+    if (item >= 0)
     {
-        long item = -1;
-        int flags = 0;
-    
-        item = HitTest(event.GetPosition(), flags);
-    
-        if (item >= 0)
+        wxString tooltip;
+        int icon = cp_->GetItemImage(item);
+
+        switch (icon)
         {
-            wxString tooltip;
-            int icon = cp_->GetItemImage(item);
-    
-            if (icon == 0)
-                tooltip = _("Within budget");
-            else if (icon == 1)
-                tooltip = _("Near the limit");
-            else if (icon == 2)
-                tooltip = _("Over budget");
-            else
-                tooltip.clear();
-    
-            SetToolTip(tooltip);
+        case 0:
+            tooltip = _("Within budget");
+            break;
+        case 1:
+            tooltip = _("Near the limit");
+            break;
+        case 2:
+            tooltip = _("Over budget");
+            break;
+        default:
+            tooltip.clear();
+            break;
         }
-        else
-        {
-            SetToolTip(wxEmptyString);
-        }
-    
-        event.Skip();
+
+        SetToolTip(tooltip);
+    }
+    else
+    {
+        SetToolTip(wxEmptyString);
     }
 
+    event.Skip();
 }
